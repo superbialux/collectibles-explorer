@@ -95,9 +95,16 @@ const App = () => {
                     <div className="text-base text-center font-bold w-full mb-1">
                       {liz.title}
                     </div>
-                    <div className="text-base text-center w-1/2">
-                      {toTezValue(liz.price)} tez
-                    </div>
+                    {
+                      liz.price === 0 ?
+                        <div className="text-base text-center w-1/2">
+                          Not listed
+                        </div>
+                        : <div className="text-base text-center w-1/2">
+                          {toTezValue(liz.price)} tez
+                        </div>
+                    }
+
 
                     <div className="text-base text-center w-1/2">
                       Rank: #{liz.rank}
