@@ -89,7 +89,7 @@ const App = () => {
 
               {tezzards.map((liz, idx) => (
 
-                <a target="_blank" rel="noreferrer" href={`https://objkt.com/asset/tezzardz/${liz.id}`} className="w-1/4 p-4 relative" key={liz.id}>
+                <a target="_blank" rel="noreferrer" href={`https://objkt.com/asset/tezzardz/${liz.id}`} className="w-1/4 p-4 hover:bg-gray-200 relative" key={liz.id}>
                   <img className="w-full" src={getIpfsUrl(liz.display_uri)} alt={liz.id} />
                   <div className="flex flex-row justify-center flex-wrap bg-gray-200 p-4">
                     <div className="text-base text-center w-1/2">
