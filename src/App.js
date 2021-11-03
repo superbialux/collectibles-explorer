@@ -9,37 +9,51 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const App = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [tezzards, setTezzards] = useState([])
+  const [collectibles, setCollectibles] = useState([])
   const [sort, setSort] = useState({
     id: 1,
     val: { lowest_ask: "asc_nulls_last" },
     title: 'Price: Low to High'
   })
   const [page, setPage] = useState(1)
+  const [collection, setCollection] = useState({
+    id: 0,
+    val: 'KT1LHHLso8zQWQWg1HUukajdxxbkGfNoHjh6',
+    title: 'Tezzards',
+    slug: 'tezzards'
+  })
 
   useEffect(() => {
     (async () => {
       setLoading(true)
       try {
-        const pieces = await fetchPieces(page, sort.val)
+        const pieces = await fetchPieces(page, sort.val, collection.val)
         const prepare = []
         for (let i in pieces) {
-          const tezzard = pieces[i]
-          const r = rarity.find(r => r['#FKR'] === tezzard.id)
-          prepare.push({
-            ...tezzard,
-            rank: r["Rank"],
-            score: r["Rarity Score"],
-            price: tezzard.asks && tezzard.asks.length ? tezzard.asks[0].price : 0
-          })
+          const collectible = pieces[i]
+          if (collection.id === 0) {
+            const r = rarity.find(r => r['#FKR'] === Number(collectible.id)) || {}
+            prepare.push({
+              ...collectible,
+              rank: r["Rank"],
+              score: r["Rarity Score"],
+              price: collectible.lowest_ask
+            })
+          } else {
+            prepare.push({
+              ...collectible,
+              price: collectible.lowest_ask
+            })
+          }
+
         }
-        setTezzards(prepare)
+        setCollectibles(prepare)
       } catch {
-        setError('Could not fetch tezzards')
+        setError('Could not fetch collection')
       }
       setLoading(false)
     })()
-  }, [sort, page])
+  }, [sort, page, collection])
 
 
   useEffect(() => {
@@ -57,6 +71,68 @@ const App = () => {
           <p className="text-base text-left font-medium">{loading}</p>
         </section>
         : null}<section id="main" className="w-full flex flex-col items-center pb-16"><div className="container overflow-hidden">
+          <div className="w-full flex flex-row justify-center pt-5">
+            <span className="mr-2">Collection: </span>
+            {[
+              {
+                id: 0,
+                val: 'KT1LHHLso8zQWQWg1HUukajdxxbkGfNoHjh6',
+                title: 'Tezzards',
+                slug: 'tezzards'
+              },
+              {
+                id: 1,
+                val: 'KT1VbHpQmtkA3D4uEbbju26zS8C42M5AGNjZ',
+                title: 'PRJKTNEONZ',
+                slug: 'prjktneon'
+              },
+              {
+                id: 2,
+                val: 'KT1HZVd9Cjc2CMe3sQvXgbxhpJkdena21pih',
+                title: 'randomly common skeles',
+                slug: 'rcs'
+              },
+              {
+                id: 3,
+                val: 'KT1SyPgtiXTaEfBuMZKviWGNHqVrBBEjvtfQ',
+                title: 'GOGOs',
+                slug: 'gogos'
+              },
+              {
+                id: 4,
+                val: 'KT1LbLNTTPoLgpumACCBFJzBEHDiEUqNxz5C',
+                title: 'Art Cardz',
+                slug: 'artcardz'
+              },
+              {
+                id: 5,
+                val: 'KT1MsdyBSAMQwzvDH4jt2mxUKJvBSWZuPoRJ',
+                title: 'NEONZ',
+                slug: 'neonz'
+              },
+              {
+                id: 6,
+                val: 'KT1CNHwTyjFrKnCstRoMftyFVwoNzF6Xxhpy',
+                title: 'The Moments',
+                slug: 'themoments'
+              },
+              {
+                id: 7,
+                val: 'KT1W89JFPhSEph7S1SbgjwTXibdk5t8GYX5p',
+                title: 'Kumulus',
+                slug: 'kumulus',
+              },
+              {
+                id: 8,
+                val: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
+                title: 'hicetnunc',
+                slug: 'hicetnunc'
+              },
+
+            ].map((c) => (
+              <button key={c.id} className={`mr-2 ${collection.id === c.id ? 'text-black' : 'text-blue-400 underline'}`} onClick={() => setCollection(c)}>{c.title}</button>
+            ))}
+          </div>
           <div className="w-full flex flex-row justify-center py-5">
             <span className="mr-2">Sort: </span>
             {[
@@ -75,53 +151,52 @@ const App = () => {
                 val: { lowest_ask: "desc_nulls_last" },
                 title: 'Price: High to Low'
               },
-            ].map((s) => (
-              <button className={`mr-2 ${sort.id === s.id ? 'text-black' : 'text-blue-400 underline'}`} onClick={() => setSort(s)}>{s.title}</button>
+            ].map((s, idx) => (
+              <button key={idx} className={`mr-2 ${sort.id === s.id ? 'text-black' : 'text-blue-400 underline'}`} onClick={() => setSort(s)}>{s.title}</button>
             ))}
           </div>
 
           <InfiniteScroll
-            dataLength={tezzards.length}
+            dataLength={collectibles.length}
             next={() => setPage(page + 1)}
-            hasMore={tezzards.length < 4200}
+            hasMore={collectibles.length < 4200}
           >
             <div className="flex flex-row flex-wrap">
 
-              {tezzards.map((liz, idx) => (
+              {collectibles.map((col) => (
 
-                <a target="_blank" rel="noreferrer" href={`https://objkt.com/asset/tezzardz/${liz.id}`} className="w-1/4 p-4 hover:bg-gray-200 relative" key={liz.id}>
-                  <img className="w-full" src={getIpfsUrl(liz.display_uri)} alt={liz.id} />
+                <a target="_blank" rel="noreferrer" href={`https://objkt.com/asset/${collection.slug}/${col.id}`} className="w-1/4 p-4 hover:bg-gray-200 relative" key={col.id}>
+                  <img className="w-full" src={getIpfsUrl(col.display_uri)} alt={col.id} />
                   <div className="flex flex-row justify-center flex-wrap bg-gray-200 p-3">
                     <div className="text-base text-center font-bold w-full mb-1">
-                      {liz.title}
+                      {col.title} - {col.id}
                     </div>
                     {
-                      liz.price === 0 ?
+                      col.price || col.price === 0 ?
+                        <div className="text-base text-center w-1/2">
+                          {toTezValue(col.price)} tez
+                        </div> :
                         <div className="text-base text-center w-1/2">
                           Not listed
                         </div>
-                        : <div className="text-base text-center w-1/2">
-                          {toTezValue(liz.price)} tez
-                        </div>
                     }
 
-
-                    <div className="text-base text-center w-1/2">
-                      Rank: #{liz.rank}
-                    </div>
+                    {col.rank ? <div className="text-base text-center w-1/2">
+                      Rank: #{col.rank}
+                    </div> : null}
 
 
                   </div>
-                  <div className="flex flex-row flex-wrap">
+                  {col.token_attributes && col.token_attributes.length ? <div className="flex flex-row flex-wrap">
                     {
-                      liz.token_attributes.map((attr, idx) => (
+                      col.token_attributes.map((attr, idx) => (
                         <div key={idx} className="flex flex-col w-1/3 mt-3">
                           <div className="text-sm"><b>{attr.attribute.name}</b></div>
                           <div className="text-sm">{attr.attribute.value}</div>
                         </div>
                       ))
                     }
-                  </div>
+                  </div> : null}
                 </a>
               ))}
             </div>
