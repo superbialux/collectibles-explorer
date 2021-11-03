@@ -169,7 +169,7 @@ const App = () => {
                   <img className="w-full" src={getIpfsUrl(col.display_uri)} alt={col.id} />
                   <div className="flex flex-row justify-center flex-wrap bg-gray-200 p-3">
                     <div className="text-base text-center font-bold w-full mb-1">
-                      {col.title} - {col.id}
+                      {col.title} {collection.id === 8 ? ' - ' + col.id : null}
                     </div>
                     {
                       col.price || col.price === 0 ?
