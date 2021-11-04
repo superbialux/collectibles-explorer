@@ -5,6 +5,7 @@ import { getIpfsUrl } from './utils/ipfs';
 import { toTezValue } from './utils/numbers';
 import ReactLoading from "react-loading";
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { collections } from './data/constants';
 
 const App = () => {
   const [loading, setLoading] = useState(true)
@@ -73,63 +74,7 @@ const App = () => {
         : null}<section id="main" className="w-full flex flex-col items-center pb-16"><div className="container overflow-hidden">
           <div className="w-full flex flex-row justify-center pt-5">
             <span className="mr-2">Collection: </span>
-            {[
-              {
-                id: 0,
-                val: 'KT1LHHLso8zQWQWg1HUukajdxxbkGfNoHjh6',
-                title: 'Tezzards',
-                slug: 'tezzards'
-              },
-              {
-                id: 1,
-                val: 'KT1VbHpQmtkA3D4uEbbju26zS8C42M5AGNjZ',
-                title: 'PRJKTNEONZ',
-                slug: 'prjktneon'
-              },
-              {
-                id: 2,
-                val: 'KT1HZVd9Cjc2CMe3sQvXgbxhpJkdena21pih',
-                title: 'randomly common skeles',
-                slug: 'rcs'
-              },
-              {
-                id: 3,
-                val: 'KT1SyPgtiXTaEfBuMZKviWGNHqVrBBEjvtfQ',
-                title: 'GOGOs',
-                slug: 'gogos'
-              },
-              {
-                id: 4,
-                val: 'KT1LbLNTTPoLgpumACCBFJzBEHDiEUqNxz5C',
-                title: 'Art Cardz',
-                slug: 'artcardz'
-              },
-              {
-                id: 5,
-                val: 'KT1MsdyBSAMQwzvDH4jt2mxUKJvBSWZuPoRJ',
-                title: 'NEONZ',
-                slug: 'neonz'
-              },
-              {
-                id: 6,
-                val: 'KT1CNHwTyjFrKnCstRoMftyFVwoNzF6Xxhpy',
-                title: 'The Moments',
-                slug: 'themoments'
-              },
-              {
-                id: 7,
-                val: 'KT1W89JFPhSEph7S1SbgjwTXibdk5t8GYX5p',
-                title: 'Kumulus',
-                slug: 'kumulus',
-              },
-              {
-                id: 8,
-                val: 'KT1RJ6PbjHpwc3M5rw5s2Nbmefwbuwbdxton',
-                title: 'hicetnunc',
-                slug: 'hicetnunc'
-              },
-
-            ].map((c) => (
+            {collections.map((c) => (
               <button key={c.id} className={`mr-2 ${collection.id === c.id ? 'text-black' : 'text-blue-400 underline'}`} onClick={() => setCollection(c)}>{c.title}</button>
             ))}
           </div>
