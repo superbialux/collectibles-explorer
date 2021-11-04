@@ -5,7 +5,7 @@ import { getIpfsUrl } from './utils/ipfs';
 import { toTezValue } from './utils/numbers';
 import ReactLoading from "react-loading";
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { collections } from './data/constants';
+import { collections, sortKeys } from './data/constants';
 
 const App = () => {
   const [loading, setLoading] = useState(true)
@@ -23,15 +23,36 @@ const App = () => {
     title: 'Tezzards',
     slug: 'tezzards'
   })
+  const [attributes, setAttributes] = useState({})
+  const [attrSort, setAttrSort] = useState({})
 
   useEffect(() => {
     (async () => {
+      setAttributes({})
       setLoading(true)
       try {
         const pieces = await fetchPieces(page, sort.val, collection.val)
         const prepare = []
+        const attrs = {}
         for (let i in pieces) {
           const collectible = pieces[i]
+          if (collectible.token_attributes && collectible.token_attributes.length) {
+            for (let i in collectible.token_attributes) {
+              const attr = collectible.token_attributes[i].attribute
+              if (!attrs[attr.name]) {
+                attrs[attr.name] = []
+              }
+              if (!attrs[attr.name].find(val => val === attr.value)) {
+                attrs[attr.name].push(attr.value)
+              }
+            }
+            setAttributes(attrs)
+          }
+          for (let attr in attrSort) {
+            if (attr) {
+              
+            }
+          }
           if (collection.id === 0) {
             const r = rarity.find(r => r['#FKR'] === Number(collectible.id)) || {}
             prepare.push({
@@ -46,16 +67,15 @@ const App = () => {
               price: collectible.lowest_ask
             })
           }
-
         }
         setCollectibles(prepare)
-      } catch {
+      } catch (err) {
+        console.log(err)
         setError('Could not fetch collection')
       }
       setLoading(false)
     })()
-  }, [sort, page, collection])
-
+  }, [sort, page, collection, attrSort])
 
   useEffect(() => {
     let errorTimer = setTimeout(() => setError(false), 5000);
@@ -78,28 +98,27 @@ const App = () => {
               <button key={c.id} className={`mr-2 ${collection.id === c.id ? 'text-black' : 'text-blue-400 underline'}`} onClick={() => setCollection(c)}>{c.title}</button>
             ))}
           </div>
-          <div className="w-full flex flex-row justify-center py-5">
+          <div className="w-full flex flex-row justify-center pt-5">
             <span className="mr-2">Sort: </span>
-            {[
-              {
-                id: 0,
-                val: { "last_listed": "desc_nulls_last" },
-                title: 'Recently Listed'
-              },
-              {
-                id: 1,
-                val: { lowest_ask: "asc_nulls_last" },
-                title: 'Price: Low to High'
-              },
-              {
-                id: 2,
-                val: { lowest_ask: "desc_nulls_last" },
-                title: 'Price: High to Low'
-              },
-            ].map((s, idx) => (
+            {sortKeys.map((s, idx) => (
               <button key={idx} className={`mr-2 ${sort.id === s.id ? 'text-black' : 'text-blue-400 underline'}`} onClick={() => setSort(s)}>{s.title}</button>
             ))}
           </div>
+          {Object.keys(attributes).length ? <div className="w-full flex flex-row justify-center py-5">
+            <span className="mr-2">Attributes: </span>
+            {Object.keys(attributes).map((attr, idx) => (
+              <div className='mr-2' key={idx}>
+                <h4>{attr}</h4>
+                <select value={attrSort[attr]} onChange={(e) => setAttrSort(val => ({ ...val, [attr]: e.target.value }))} >
+                  {
+                    attributes[attr].map((a, id) => (
+                      <option key={id} value={a}>{a}</option>
+                    ))
+                  }
+                </select>
+              </div>
+            ))}
+          </div> : null}
 
           <InfiniteScroll
             dataLength={collectibles.length}

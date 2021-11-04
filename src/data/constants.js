@@ -59,5 +59,22 @@ export const collections = [
         title: 'Chop Sumo',
         slug: 'chopsumo'
     },
-
 ]
+
+export const sortKeys = [
+    {
+      id: 0,
+      val: { "last_listed": "desc_nulls_last" },
+      title: 'Recently Listed'
+    },
+    {
+      id: 1,
+      val: { lowest_ask: "asc_nulls_last" },
+      title: 'Price: Low to High'
+    },
+    {
+      id: 2,
+      val: { lowest_ask: "desc_nulls_last" },
+      title: 'Price: High to Low'
+    },
+  ]
